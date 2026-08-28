@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Connected Accounts — VendoraShop{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 2rem auto; padding: 2rem;">
+  <h2 style="margin-bottom: 1.5rem;">Connected Accounts</h2>
+
+  <!-- Currently Connected -->
+  {% if form.accounts %}
+    <div style="margin-bottom: 2rem;">
+      <h3 style="font-size: 1rem; margin-bottom: 0.75rem; color: #555;">Your linked accounts</h3>
+      <form method="post" action="{% url 'socialaccount_connections' %}">
+        {% csrf_token %}
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          {% for base_account in form.accounts %}
+            <li style="display: flex; align-items: center; justify-content: space-between;
+                       padding: 0.75rem 1rem; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 0.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span style="font-weight: 500;">{{ base_account.get_provider.name }}</span>
+                <span style="color: #888; font-size: 0.875rem;">{{ base_account }}</span>
+              </div>
+              <label style="display: flex; align-items: center; gap: 0.375rem; color: #dc2626; cursor: pointer;">
+                <input type="radio" name="account" value="{{ base_account.id }}">
+                Disconnect
+              </label>
+            </li>
+          {% endfor %}
+        </ul>
+        <button type="submit" style="margin-top: 0.75rem; padding: 0.5rem 1rem; background: #dc2626; color: #fff;
+                border: none; border-radius: 6px; font-weight: 500; cursor: pointer;">
+          Remove Selected
+        </button>
+      </form>
+    </div>
+  {% else %}
+    <p style="color: #888; margin-bottom: 2rem;">You don't have any social accounts connected.</p>
+  {% endif %}
+
+  <!-- Connect New Accounts -->
+  <div>
+    <h3 style="font-size: 1rem; margin-bottom: 0.75rem; color: #555;">Connect a new account</h3>
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+      <a href="{% url 'google_login' %}?process=connect"
+         style="display: inline-flex; align-items: center; gap: 0.5rem;
+                padding: 0.625rem 1rem; border: 1px solid #ddd; border-radius: 8px;
+                text-decoration: none; color: #333; font-weight: 500;">
+        + Connect Google
+      </a>
+      <a href="#" title="Apple login coming soon"
+         style="display: inline-flex; align-items: center; gap: 0.5rem;
+                padding: 0.625rem 1rem; border: 1px solid #ddd; border-radius: 8px;
+                text-decoration: none; color: #999; font-weight: 500; opacity: 0.5;">
+        + Connect Apple (coming soon)
+      </a>
+    </div>
+  </div>
+
+  <!-- Password Section -->
+  <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+    {% if not user.has_usable_password %}
+      <p style="color: #888; margin-bottom: 0.5rem;">You signed in via a social account and don't have a password yet.</p>
+      <a href="{% url 'account_set_password' %}" style="color: #2563eb; font-weight: 500;">Set a password</a>
+    {% else %}
+      <a href="{% url 'account_change_password' %}" style="color: #2563eb; font-weight: 500;">Change password</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

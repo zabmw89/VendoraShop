@@ -1,0 +1,15 @@
+{% extends "emails/base.html" %}
+{% block content %}
+<h2>Welcome to Vendora Shop! 👋</h2>
+<p>Hi {{ full_name }},</p>
+<p>Thank you for joining Vendora Shop! We're excited to have you on board.</p>
+<p>Here's what you can do:</p>
+<ul>
+  <li>Browse our curated collection of premium tech and lifestyle products</li>
+  <li>Save items to your wishlist</li>
+  <li>Track your orders in real-time</li>
+  <li>Enjoy exclusive member discounts</li>
+</ul>
+<a href="{{ shop_url }}" class="btn">Start Shopping</a>
+<p>If you have any questions, feel free to reach out to our support team.</p>
+{% endblock %}

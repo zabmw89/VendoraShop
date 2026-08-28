@@ -1,0 +1,20 @@
+{
+  "short_name": "VendoraShop",
+  "name": "VendoraShop",
+  "icons": [
+    {
+      "src": "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=192&auto=format&fit=crop&q=80",
+      "type": "image/jpeg",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=512&auto=format&fit=crop&q=80",
+      "type": "image/jpeg",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "display": "standalone"
+}

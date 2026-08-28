@@ -1,0 +1,61 @@
+# Render Blueprint for VendoraShop — one-click "live demo" deploy.
+#
+# In the Render dashboard: New → Blueprint → point at this repo. Render will
+# provision a free PostgreSQL database and a single web service that builds the
+# React SPA, collects static assets, runs migrations, seeds the demo data, and
+# serves everything (API + SPA) from one Gunicorn process.
+#
+# After the first deploy, log in with the published demo credentials
+# (see README → "Demo Credentials").
+
+databases:
+  - name: vendorashop-db
+    plan: free
+    databaseName: vendorashop
+    user: vendora
+
+services:
+  - type: web
+    name: vendorashop
+    runtime: python
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: |
+      set -o errexit
+      # Build the React SPA
+      npm ci
+      npm run build
+      # Backend
+      pip install -r requirements.txt
+      python backend/manage.py collectstatic --noinput
+      python backend/manage.py migrate
+      # Seed demo catalog + credentials (idempotent; DEMO_MODE enabled below)
+      python backend/manage.py seed_demo_data || true
+    startCommand: gunicorn config.wsgi:application --chdir backend --bind 0.0.0.0:$PORT --workers 3 --timeout 120
+    healthCheckPath: /api/health/
+    envVars:
+      - key: DJANGO_ENV
+        value: production
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.12.4"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        # Render injects the external hostname here at deploy time.
+        fromService:
+          type: web
+          name: vendorashop
+          property: host
+      - key: DATABASE_URL
+        fromDatabase:
+          name: vendorashop-db
+          property: connectionString
+      - key: DEMO_MODE
+        value: "true"
+      # Set these in the dashboard to enable real Stripe payments:
+      # - key: STRIPE_SECRET_KEY
+      # - key: STRIPE_PUBLISHABLE_KEY
+      # - key: STRIPE_WEBHOOK_SECRET

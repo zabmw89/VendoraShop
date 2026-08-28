@@ -1,0 +1,18 @@
+[run]
+source = apps,config
+omit =
+    */migrations/*
+    */tests/*
+    */__pycache__/*
+    manage.py
+    config/wsgi.py
+    config/asgi.py
+    .venv/*
+
+[report]
+show_missing = True
+skip_covered = False
+exclude_lines =
+    pragma: no cover
+    raise NotImplementedError
+    if __name__ == .__main__.:
